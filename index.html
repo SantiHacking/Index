@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>FELIZ DIA MI AMOR, TE AMO </title>
+  <title>FELIZ DIA MI AMOR, TE AMO</title>
   <style>
     body{
       display:flex;
@@ -44,14 +44,15 @@
     const W = canvas.width;
     const H = canvas.height;
     const cx = W/2;
-    const cy = H/2 - 10;
+    const cy = H/2 - 20;
 
     let petalIndex = 0;
     let totalPetals = 16 * 18; // pétalos totales (capas x ángulos)
 
     function drawStem(){
       ctx.fillStyle = 'green';
-      ctx.fillRect(cx - 180 - 10, cy + 80, 20, 180);
+      // Tallo centrado bajo la flor
+      ctx.fillRect(cx - 10, cy + 50, 20, 200);
     }
 
     function drawPetal(i,j){
@@ -61,29 +62,17 @@
       const r = 150 - j*6;
       ctx.beginPath();
       ctx.ellipse(0, -40, r*0.18, r*0.5, 0, 0, Math.PI*2);
-      const hue = (i*18 + j*3) % 360;
-      const light = 55 - j*0.7;
-      ctx.fillStyle = `hsl(${hue}, 90%, ${light}%)`;
+      ctx.fillStyle = "#FFD700"; // amarillo
       ctx.fill();
       ctx.restore();
     }
 
     function drawCenter(){
+      // Círculo rojo del centro
       ctx.beginPath();
       ctx.fillStyle = 'red';
       ctx.arc(cx, cy, 44, 0, Math.PI*2);
       ctx.fill();
-
-      for (let i = 0; i < 200; i++){
-        const r = 4 * Math.sqrt(i);
-        const theta = i * 137.508 * Math.PI/180;
-        const x = cx + r * Math.cos(theta);
-        const y = cy + r * Math.sin(theta);
-        ctx.beginPath();
-        ctx.fillStyle = `rgba(100,60,20,0.95)`;
-        ctx.arc(x, y, 3, 0, Math.PI*2);
-        ctx.fill();
-      }
     }
 
     function animate(){
@@ -106,4 +95,6 @@
   </script>
 </body>
 </html>
+
+
 
