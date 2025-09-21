@@ -25,11 +25,11 @@
       gap:40px; /* espacio entre flores */
     }
     canvas{
-      width:320px;
-      height:320px;
-      background:#ffffff; /* también blanco dentro del canvas */
-      border-radius:12px;
-      box-shadow:0 8px 20px rgba(0,0,0,0.15);
+      width:240px;
+      height:240px;
+      background:#ffffff; /* blanco sin sombra */
+      border-radius:0; /* sin bordes redondeados */
+      box-shadow:none; /* sin sombra */
       display:block;
     }
   </style>
@@ -37,8 +37,9 @@
 <body>
   <div id="title">💛 FELIZ DIA MI AMOR, TE AMO 💛</div>
   <div class="canvas-row">
-    <canvas class="flower" width="320" height="320"></canvas>
-    <canvas class="flower" width="320" height="320"></canvas>
+    <canvas class="flower" width="240" height="240"></canvas>
+    <canvas class="flower" width="240" height="240"></canvas>
+    <canvas class="flower" width="240" height="240"></canvas>
   </div>
 
   <script>
@@ -50,20 +51,20 @@
       const cy = H/2 - 20;
 
       let petalIndex = 0;
-      let totalPetals = 16 * 18;
+      let totalPetals = 12 * 12; // menos pétalos para forma más clara
 
       function drawStem(){
         ctx.fillStyle = 'green';
-        ctx.fillRect(cx - 5, cy + 40, 10, 120); // tallo centrado
+        ctx.fillRect(cx - 5, cy + 30, 10, 100); // tallo centrado
       }
 
       function drawPetal(i,j){
         ctx.save();
         ctx.translate(cx, cy);
-        ctx.rotate(i * (2*Math.PI/16));
-        const r = 120 - j*4;
+        ctx.rotate(i * (2*Math.PI/12));
+        const r = 100 - j*5;
         ctx.beginPath();
-        ctx.ellipse(0, -30, r*0.18, r*0.5, 0, 0, Math.PI*2);
+        ctx.ellipse(0, -25, r*0.18, r*0.5, 0, 0, Math.PI*2);
         ctx.fillStyle = "#FFD700"; // amarillo
         ctx.fill();
         ctx.restore();
@@ -72,7 +73,7 @@
       function drawCenter(){
         ctx.beginPath();
         ctx.fillStyle = 'red';
-        ctx.arc(cx, cy, 30, 0, Math.PI*2);
+        ctx.arc(cx, cy, 28, 0, Math.PI*2);
         ctx.fill();
       }
 
@@ -82,11 +83,12 @@
           drawStem();
         }
         if (petalIndex < totalPetals){
-          const i = Math.floor(petalIndex/18);
-          const j = petalIndex % 18;
+          const i = Math.floor(petalIndex/12);
+          const j = petalIndex % 12;
           drawPetal(i,j);
           petalIndex++;
-          requestAnimationFrame(animate);
+          // más lento → retraso entre frames
+          setTimeout(()=> requestAnimationFrame(animate), 40); 
         } else if (petalIndex === totalPetals){
           drawCenter();
         }
@@ -94,11 +96,12 @@
       animate();
     }
 
-    // Animar todas las flores
+    // Animar las 3 flores
     document.querySelectorAll(".flower").forEach(drawFlower);
   </script>
 </body>
 </html>
+
 
 
 
