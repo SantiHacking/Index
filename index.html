@@ -25,10 +25,8 @@
       gap:40px; /* espacio entre flores */
     }
     canvas{
-      width:240px;
-      height:240px;
-      background:#ffffff; /* blanco sin sombra */
-      border-radius:0; /* sin bordes redondeados */
+      background:#ffffff; /* blanco */
+      border:none;
       box-shadow:none; /* sin sombra */
       display:block;
     }
@@ -37,43 +35,46 @@
 <body>
   <div id="title">💛 FELIZ DIA MI AMOR, TE AMO 💛</div>
   <div class="canvas-row">
-    <canvas class="flower" width="240" height="240"></canvas>
-    <canvas class="flower" width="240" height="240"></canvas>
-    <canvas class="flower" width="240" height="240"></canvas>
+    <!-- flores más pequeñas -->
+    <canvas class="flower small" width="220" height="220"></canvas>
+    <!-- flor central más grande -->
+    <canvas class="flower big" width="320" height="320"></canvas>
+    <!-- flores más pequeñas -->
+    <canvas class="flower small" width="220" height="220"></canvas>
   </div>
 
   <script>
-    function drawFlower(canvas){
+    function drawFlower(canvas, petalsAcross, layers, petalColor, centerColor){
       const ctx = canvas.getContext('2d');
       const W = canvas.width;
       const H = canvas.height;
       const cx = W/2;
-      const cy = H/2 - 20;
+      const cy = H/2 - 15;
 
       let petalIndex = 0;
-      let totalPetals = 12 * 12; // menos pétalos para forma más clara
+      let totalPetals = petalsAcross * layers;
 
       function drawStem(){
         ctx.fillStyle = 'green';
-        ctx.fillRect(cx - 5, cy + 30, 10, 100); // tallo centrado
+        ctx.fillRect(cx - 5, cy + 30, 10, H/2); // tallo
       }
 
       function drawPetal(i,j){
         ctx.save();
         ctx.translate(cx, cy);
-        ctx.rotate(i * (2*Math.PI/12));
-        const r = 100 - j*5;
+        ctx.rotate(i * (2*Math.PI/petalsAcross));
+        const r = (W/2 - 40) - j*4;
         ctx.beginPath();
         ctx.ellipse(0, -25, r*0.18, r*0.5, 0, 0, Math.PI*2);
-        ctx.fillStyle = "#FFD700"; // amarillo
+        ctx.fillStyle = petalColor;
         ctx.fill();
         ctx.restore();
       }
 
       function drawCenter(){
         ctx.beginPath();
-        ctx.fillStyle = 'red';
-        ctx.arc(cx, cy, 28, 0, Math.PI*2);
+        ctx.fillStyle = centerColor;
+        ctx.arc(cx, cy, W/10, 0, Math.PI*2);
         ctx.fill();
       }
 
@@ -83,12 +84,12 @@
           drawStem();
         }
         if (petalIndex < totalPetals){
-          const i = Math.floor(petalIndex/12);
-          const j = petalIndex % 12;
+          const i = Math.floor(petalIndex/layers);
+          const j = petalIndex % layers;
           drawPetal(i,j);
           petalIndex++;
-          // más lento → retraso entre frames
-          setTimeout(()=> requestAnimationFrame(animate), 40); 
+          // más rápido (20ms en vez de 40ms)
+          setTimeout(()=> requestAnimationFrame(animate), 20);
         } else if (petalIndex === totalPetals){
           drawCenter();
         }
@@ -96,12 +97,18 @@
       animate();
     }
 
-    // Animar las 3 flores
-    document.querySelectorAll(".flower").forEach(drawFlower);
+    // Flores laterales (más pequeñas, menos pétalos)
+    document.querySelectorAll(".flower.small").forEach(c => {
+      drawFlower(c, 18, 14, "#FFD700", "red"); // pétalos 18*14
+    });
+
+    // Flor central (más grande, más pétalos)
+    document.querySelectorAll(".flower.big").forEach(c => {
+      drawFlower(c, 24, 16, "#FFD700", "red"); // pétalos 24*16
+    });
   </script>
 </body>
 </html>
-
 
 
 
