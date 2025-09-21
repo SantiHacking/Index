@@ -44,7 +44,7 @@
   </div>
 
   <script>
-    function drawFlower(canvas, petalsAcross, layers, petalColor, centerColor){
+    function drawFlower(canvas, petalsAcross, layers, petalColor, centerColor, speed){
       const ctx = canvas.getContext('2d');
       const W = canvas.width;
       const H = canvas.height;
@@ -88,8 +88,8 @@
           const j = petalIndex % layers;
           drawPetal(i,j);
           petalIndex++;
-          // más rápido (20ms en vez de 40ms)
-          setTimeout(()=> requestAnimationFrame(animate), 20);
+          // velocidad de animación personalizada
+          setTimeout(()=> requestAnimationFrame(animate), speed);
         } else if (petalIndex === totalPetals){
           drawCenter();
         }
@@ -97,18 +97,19 @@
       animate();
     }
 
-    // Flores laterales (más pequeñas, menos pétalos)
+    // Flores laterales (más pequeñas, animación más lenta)
     document.querySelectorAll(".flower.small").forEach(c => {
-      drawFlower(c, 18, 14, "#FFD700", "red"); // pétalos 18*14
+      drawFlower(c, 18, 14, "#FFD700", "red", 25); // pétalos y velocidad
     });
 
-    // Flor central (más grande, más pétalos)
+    // Flor central (más grande, más rápida)
     document.querySelectorAll(".flower.big").forEach(c => {
-      drawFlower(c, 24, 16, "#FFD700", "red"); // pétalos 24*16
+      drawFlower(c, 24, 16, "#FFD700", "red", 10); // más pétalos, animación más rápida
     });
   </script>
 </body>
 </html>
+
 
 
 
