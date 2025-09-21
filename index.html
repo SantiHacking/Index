@@ -7,94 +7,100 @@
   <style>
     body{
       display:flex;
+      flex-direction:column;
       align-items:center;
       justify-content:center;
       height:100vh;
       margin:0;
-      background:#f2f2f2;
-    }
-    #container{
-      text-align:center;
+      background:#ffffff; /* fondo blanco */
     }
     #title{
-      font-size:22px;
+      font-size:24px;
       font-weight:700;
-      color:#00c853;
-      margin-bottom:8px;
+      color:#000; /* letras negras */
+      margin-bottom:20px;
+    }
+    .canvas-row{
+      display:flex;
+      gap:40px; /* espacio entre flores */
     }
     canvas{
-      width:760px;
-      height:520px;
-      background:#000;
+      width:320px;
+      height:320px;
+      background:#ffffff; /* también blanco dentro del canvas */
       border-radius:12px;
-      box-shadow:0 10px 30px rgba(0,0,0,0.25);
+      box-shadow:0 8px 20px rgba(0,0,0,0.15);
       display:block;
     }
   </style>
 </head>
 <body>
-  <div id="container">
-    <div id="title">FELIZ DIA MI AMOR, TE AMO</div>
-    <canvas id="flower" width="760" height="520"></canvas>
+  <div id="title">💛 FELIZ DIA MI AMOR, TE AMO 💛</div>
+  <div class="canvas-row">
+    <canvas class="flower" width="320" height="320"></canvas>
+    <canvas class="flower" width="320" height="320"></canvas>
   </div>
 
   <script>
-    const canvas = document.getElementById('flower');
-    const ctx = canvas.getContext('2d');
-    const W = canvas.width;
-    const H = canvas.height;
-    const cx = W/2;
-    const cy = H/2 - 20;
+    function drawFlower(canvas){
+      const ctx = canvas.getContext('2d');
+      const W = canvas.width;
+      const H = canvas.height;
+      const cx = W/2;
+      const cy = H/2 - 20;
 
-    let petalIndex = 0;
-    let totalPetals = 16 * 18; // pétalos totales (capas x ángulos)
+      let petalIndex = 0;
+      let totalPetals = 16 * 18;
 
-    function drawStem(){
-      ctx.fillStyle = 'green';
-      // Tallo centrado bajo la flor
-      ctx.fillRect(cx - 10, cy + 50, 20, 200);
-    }
-
-    function drawPetal(i,j){
-      ctx.save();
-      ctx.translate(cx, cy);
-      ctx.rotate(i * (2*Math.PI/16));
-      const r = 150 - j*6;
-      ctx.beginPath();
-      ctx.ellipse(0, -40, r*0.18, r*0.5, 0, 0, Math.PI*2);
-      ctx.fillStyle = "#FFD700"; // amarillo
-      ctx.fill();
-      ctx.restore();
-    }
-
-    function drawCenter(){
-      // Círculo rojo del centro
-      ctx.beginPath();
-      ctx.fillStyle = 'red';
-      ctx.arc(cx, cy, 44, 0, Math.PI*2);
-      ctx.fill();
-    }
-
-    function animate(){
-      if (petalIndex === 0){
-        ctx.clearRect(0,0,W,H);
-        drawStem();
+      function drawStem(){
+        ctx.fillStyle = 'green';
+        ctx.fillRect(cx - 5, cy + 40, 10, 120); // tallo centrado
       }
-      if (petalIndex < totalPetals){
-        const i = Math.floor(petalIndex/18);
-        const j = petalIndex % 18;
-        drawPetal(i,j);
-        petalIndex++;
-        requestAnimationFrame(animate);
-      } else if (petalIndex === totalPetals){
-        drawCenter();
+
+      function drawPetal(i,j){
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(i * (2*Math.PI/16));
+        const r = 120 - j*4;
+        ctx.beginPath();
+        ctx.ellipse(0, -30, r*0.18, r*0.5, 0, 0, Math.PI*2);
+        ctx.fillStyle = "#FFD700"; // amarillo
+        ctx.fill();
+        ctx.restore();
       }
+
+      function drawCenter(){
+        ctx.beginPath();
+        ctx.fillStyle = 'red';
+        ctx.arc(cx, cy, 30, 0, Math.PI*2);
+        ctx.fill();
+      }
+
+      function animate(){
+        if (petalIndex === 0){
+          ctx.clearRect(0,0,W,H);
+          drawStem();
+        }
+        if (petalIndex < totalPetals){
+          const i = Math.floor(petalIndex/18);
+          const j = petalIndex % 18;
+          drawPetal(i,j);
+          petalIndex++;
+          requestAnimationFrame(animate);
+        } else if (petalIndex === totalPetals){
+          drawCenter();
+        }
+      }
+      animate();
     }
 
-    animate();
+    // Animar todas las flores
+    document.querySelectorAll(".flower").forEach(drawFlower);
   </script>
 </body>
 </html>
+
+
 
 
 
