@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ME AMAS TANIA?</title>
+  <title>FELIZ DIA MI AMOR, TE AMO </title>
   <style>
     body{
       display:flex;
@@ -12,16 +12,9 @@
       height:100vh;
       margin:0;
       background:#f2f2f2;
-      overflow:hidden;
-      font-family:system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
     #container{
-      position:relative;
-      width:760px;
-      max-width:95vw;
       text-align:center;
-      padding:18px;
-      box-sizing:border-box;
     }
     #title{
       font-size:22px;
@@ -30,93 +23,57 @@
       margin-bottom:8px;
     }
     canvas{
-      width:100%;
-      height:auto;
+      width:760px;
+      height:520px;
       background:#000;
       border-radius:12px;
       box-shadow:0 10px 30px rgba(0,0,0,0.25);
       display:block;
-    }
-    .controls{
-      margin-top:10px;
-      position:relative;
-      height:48px; /* espacio donde "saltará" el botón No */
-    }
-    #btnYes, #btnNo{
-      padding:10px 18px;
-      font-size:16px;
-      cursor:pointer;
-      border-radius:8px;
-      border:none;
-    }
-    #btnYes{ background:#4caf50; color:white; }
-    #btnNo{
-      background:#f44336; color:white;
-      position:absolute;
-      left:50%;
-      transform:translateX(10px);
-      top:0;
     }
   </style>
 </head>
 <body>
   <div id="container">
     <div id="title">¿ME AMAS TANIA?</div>
-    <canvas id="flower" width="760" height="520" aria-label="Flor"></canvas>
-
-    <div class="controls">
-      <button id="btnYes">Sí</button>
-      <button id="btnNo" title="No?">No</button>
-    </div>
+    <canvas id="flower" width="760" height="520"></canvas>
   </div>
 
   <script>
-    /* --- Dibuja la flor en canvas (inspirado en tus scripts turtle) --- */
     const canvas = document.getElementById('flower');
     const ctx = canvas.getContext('2d');
     const W = canvas.width;
     const H = canvas.height;
-    const cx = W / 2;
-    const cy = H / 2 - 10;
+    const cx = W/2;
+    const cy = H/2 - 10;
 
-    function drawFlower(){
-      ctx.clearRect(0,0,W,H);
+    let petalIndex = 0;
+    let totalPetals = 16 * 18; // pétalos totales (capas x ángulos)
 
-      // Tallito
-      ctx.save();
-      ctx.translate(cx - 180, cy + 80);
+    function drawStem(){
       ctx.fillStyle = 'green';
-      ctx.fillRect(-10, 0, 20, 180);
+      ctx.fillRect(cx - 180 - 10, cy + 80, 20, 180);
+    }
+
+    function drawPetal(i,j){
+      ctx.save();
+      ctx.translate(cx, cy);
+      ctx.rotate(i * (2*Math.PI/16));
+      const r = 150 - j*6;
+      ctx.beginPath();
+      ctx.ellipse(0, -40, r*0.18, r*0.5, 0, 0, Math.PI*2);
+      const hue = (i*18 + j*3) % 360;
+      const light = 55 - j*0.7;
+      ctx.fillStyle = `hsl(${hue}, 90%, ${light}%)`;
+      ctx.fill();
       ctx.restore();
+    }
 
-      // Pétalos (capas radiales)
-      for (let i = 0; i < 16; i++){
-        ctx.save();
-        ctx.translate(cx, cy);
-        ctx.rotate(i * (2*Math.PI/16));
-        for (let j = 0; j < 18; j++){
-          const r = 150 - j*6;
-          // petalo como elipse desplazada
-          ctx.beginPath();
-          ctx.ellipse(0, -40, r*0.18, r*0.5, 0, 0, Math.PI*2);
-          // color parecido a tus HSV
-          const hue = (i*18 + j*3) % 360;
-          const light = 55 - j*0.7;
-          ctx.fillStyle = `hsl(${hue}, 90%, ${light}%)`;
-          ctx.fill();
-          ctx.globalCompositeOperation = 'lighter';
-        }
-        ctx.restore();
-      }
-      ctx.globalCompositeOperation = 'source-over';
-
-      // Centro rojo (como en tu ella.py)
+    function drawCenter(){
       ctx.beginPath();
       ctx.fillStyle = 'red';
       ctx.arc(cx, cy, 44, 0, Math.PI*2);
       ctx.fill();
 
-      // Centro con espiral tipo "stamps" (golden angle)
       for (let i = 0; i < 200; i++){
         const r = 4 * Math.sqrt(i);
         const theta = i * 137.508 * Math.PI/180;
@@ -129,33 +86,23 @@
       }
     }
 
-    drawFlower();
-
-    // Botones
-    document.getElementById('btnYes').addEventListener('click', ()=> alert('Yo también te amo.'));
-    const btnNo = document.getElementById('btnNo');
-    const container = document.getElementById('container');
-
-    function moverNo(){
-      const rect = container.getBoundingClientRect();
-      const btnW = btnNo.offsetWidth;
-      const btnH = btnNo.offsetHeight;
-      const maxX = rect.width - btnW;
-      const maxY = 48 - btnH; // el contenedor .controls altura fija 48
-      const newX = Math.floor(Math.random() * Math.max(1, maxX));
-      const newY = Math.floor(Math.random() * Math.max(1, maxY));
-      btnNo.style.left = `${newX}px`;
-      btnNo.style.top = `${newY}px`;
+    function animate(){
+      if (petalIndex === 0){
+        ctx.clearRect(0,0,W,H);
+        drawStem();
+      }
+      if (petalIndex < totalPetals){
+        const i = Math.floor(petalIndex/18);
+        const j = petalIndex % 18;
+        drawPetal(i,j);
+        petalIndex++;
+        requestAnimationFrame(animate);
+      } else if (petalIndex === totalPetals){
+        drawCenter();
+      }
     }
-    btnNo.addEventListener('mouseover', moverNo);
 
-    // Si redimensionan ventana, redibuja (mantener calidad)
-    window.addEventListener('resize', () => {
-      // si quieres que el canvas responda a tamaño real, puedes re-escalar aquí
-      drawFlower();
-    });
+    animate();
   </script>
 </body>
 </html>
-
-
